@@ -42,16 +42,15 @@ public class GetDirections extends HttpServlet {
             throws ServletException, IOException {
         String origin = request.getParameter("origin");
         String destination = request.getParameter("destination");
-        
-        // creating the request for the address
-        this.context = context
-            .setQueryRateLimit(3)
+               
+// creating the request for the address
+        this.context = new GeoApiContext();
+        this.context.setQueryRateLimit(3)
             .setConnectTimeout(1, TimeUnit.SECONDS)
             .setReadTimeout(1, TimeUnit.SECONDS)
             .setWriteTimeout(1, TimeUnit.SECONDS);
+        this.context.setApiKey("AIzaSyClNjB-fc75pi1jBFARfKlX6XEsCS3H77Q");
         
-        
-        int x = 3;
         // syncronize call 
         DirectionsResult result;
         try {
