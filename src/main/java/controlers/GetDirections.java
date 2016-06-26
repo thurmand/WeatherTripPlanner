@@ -6,11 +6,16 @@
 package controlers;
 
 import com.google.maps.DirectionsApi;
+import com.google.maps.DirectionsApiRequest;
 import com.google.maps.GeoApiContext;
 import com.google.maps.model.DirectionsResult;
+import com.google.maps.model.DirectionsStep;
+import com.google.maps.model.Distance;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -19,6 +24,8 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import models.Direction;
+import models.DirectionHandler;
 
 /**
  *
@@ -51,15 +58,24 @@ public class GetDirections extends HttpServlet {
             .setWriteTimeout(1, TimeUnit.SECONDS);
         this.context.setApiKey("AIzaSyClNjB-fc75pi1jBFARfKlX6XEsCS3H77Q");
         
+        
         // syncronize call 
         DirectionsResult result;
+        List<String> pasos = new ArrayList<>();
         try {
-            result = DirectionsApi.getDirections(context, origin, destination).await();
-            request.setAttribute("result", result);
+            result = DirectionsApi.getDirections(context, origin, destination).await();           
+            
+            Direction dr = DirectionHandler.getDirections(result.routes[0].legs[0].steps);
+//            for (DirectionsStep step : result.routes[0].legs[0].steps) {
+//                //System.out.println(step.distance.humanReadable);
+//                pasos.add(step.distance.humanReadable);
+//            }
+            request.setAttribute("pasos", dr.steps);
         } catch (Exception ex) {
             Logger.getLogger(GetDirections.class.getName()).log(Level.SEVERE, null, ex);
         }
-
+        
+       
         request.getRequestDispatcher("result.jsp").forward(request, response);
         
     }
