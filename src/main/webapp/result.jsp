@@ -17,6 +17,7 @@
     </head>
     <body>
         <h1>This are your direction:</h1>
+        ${weather}
         <c:forEach var="paso" items="${pasos}">
             <li>Starting point: ${paso.startLocation} Distance: ${paso.distance} How long it will take: ${paso.duration} End Location: ${paso.endLocation}</li>
         </c:forEach>

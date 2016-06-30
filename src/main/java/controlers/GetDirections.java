@@ -5,6 +5,8 @@
  */
 package controlers;
 
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.maps.DirectionsApi;
 import com.google.maps.DirectionsApiRequest;
 import com.google.maps.GeoApiContext;
@@ -16,6 +18,7 @@ import java.io.PrintWriter;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -61,11 +64,11 @@ public class GetDirections extends HttpServlet {
         
         // syncronize call 
         DirectionsResult result;
-        List<String> pasos = new ArrayList<>();
+        Direction dr = new Direction();
         try {
             result = DirectionsApi.getDirections(context, origin, destination).await();           
             
-            Direction dr = DirectionHandler.getDirections(result.routes[0].legs[0].steps);
+            dr = DirectionHandler.getDirections(result.routes[0].legs[0].steps);
 //            for (DirectionsStep step : result.routes[0].legs[0].steps) {
 //                //System.out.println(step.distance.humanReadable);
 //                pasos.add(step.distance.humanReadable);
@@ -75,8 +78,22 @@ public class GetDirections extends HttpServlet {
             Logger.getLogger(GetDirections.class.getName()).log(Level.SEVERE, null, ex);
         }
         
+        URL url = new URL("http://api.wunderground.com/api/2e9b16146cbd45f7/geolookup/q/" + dr.steps.get(0).startLocation + ".json" );
+        System.out.println(url);
+        ObjectMapper mapper = new ObjectMapper();
+        JsonNode root = mapper.readTree(url);
+        String city = root.get("location").get("city").asText();
+        String state = root.get("location").get("state").asText();
+        
+        
+        URL url2 = new URL("http://api.wunderground.com/api/2e9b16146cbd45f7/forecast/q/" + state + "/" + city + ".json");
+        ObjectMapper weatherMapper = new ObjectMapper();
+        JsonNode weatherRoot = mapper.readTree(url2);
+        String weather = weatherRoot.get("forecast").get("txt_forecast").get("forecastday").get(0).get("fcttext").asText();
+               
+       request.setAttribute("weather", weather);
        
-        request.getRequestDispatcher("result.jsp").forward(request, response);
+       request.getRequestDispatcher("result.jsp").forward(request, response);
         
     }
 

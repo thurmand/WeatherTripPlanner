@@ -23,4 +23,8 @@ public class Direction {
             steps.add(new Step(step));
         }
     }
+    
+    public Direction(){
+        
+    }
 }
