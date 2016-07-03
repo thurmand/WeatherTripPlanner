@@ -95,7 +95,7 @@ public class GetDirections extends HttpServlet {
                             "api.wunderground.com",
                             "/api/2e9b16146cbd45f7/forecast/q/" + state + "/" + city + ".json",
                             null);
-                    url = new URL(uri.toASCIIStr`ing());
+                    url = new URL(uri.toASCIIString());
                     JsonNode weatherRoot = mapper.readTree(url);
                     String forecast = weatherRoot.get("forecast").get("txt_forecast").get("forecastday").get(0).get("fcttext").asText();
                     
