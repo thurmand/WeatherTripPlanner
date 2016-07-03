@@ -5,6 +5,7 @@
  */
 package controlers;
 
+import java.net.URI;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.maps.DirectionsApi;
@@ -29,6 +30,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import models.Direction;
 import models.DirectionHandler;
+import models.Weather;
 
 /**
  *
@@ -65,6 +67,8 @@ public class GetDirections extends HttpServlet {
         // syncronize call 
         DirectionsResult result;
         Direction dr = new Direction();
+        long ws = 0;
+        long distanceM = 0;
         try {
             result = DirectionsApi.getDirections(context, origin, destination).await();           
             
@@ -73,26 +77,40 @@ public class GetDirections extends HttpServlet {
 //                //System.out.println(step.distance.humanReadable);
 //                pasos.add(step.distance.humanReadable);
 //            }
+            ws = result.routes[0].legs[0].distance.inMeters / 9;
+            if(ws < 24000){
+                ws = 24000;
+            }
+            
+            for(int i = 0; i < dr.steps.size(); i++){
+                
+                while(distanceM > ws){                   
+                    URL url = new URL("http://api.wunderground.com/api/2e9b16146cbd45f7/geolookup/q/" + dr.steps.get(i).startLocation + ".json" );
+                    ObjectMapper mapper = new ObjectMapper();
+                    JsonNode root = mapper.readTree(url);
+                    String city = root.get("location").get("city").asText();
+                    String state = root.get("location").get("state").asText();
+                    
+                    URI uri = new URI("http",
+                            "api.wunderground.com",
+                            "/api/2e9b16146cbd45f7/forecast/q/" + state + "/" + city + ".json",
+                            null);
+                    url = new URL(uri.toASCIIStr`ing());
+                    JsonNode weatherRoot = mapper.readTree(url);
+                    String forecast = weatherRoot.get("forecast").get("txt_forecast").get("forecastday").get(0).get("fcttext").asText();
+                    
+                    Weather weather = new Weather(city, state, forecast);
+                    dr.steps.get(i).weatherList.add(weather);
+                    distanceM -= ws;
+                }
+                distanceM += dr.steps.get(i).distanceMeters;
+            }   
+            
             request.setAttribute("pasos", dr.steps);
         } catch (Exception ex) {
             Logger.getLogger(GetDirections.class.getName()).log(Level.SEVERE, null, ex);
         }
-        
-        URL url = new URL("http://api.wunderground.com/api/2e9b16146cbd45f7/geolookup/q/" + dr.steps.get(0).startLocation + ".json" );
-        System.out.println(url);
-        ObjectMapper mapper = new ObjectMapper();
-        JsonNode root = mapper.readTree(url);
-        String city = root.get("location").get("city").asText();
-        String state = root.get("location").get("state").asText();
-        
-        
-        URL url2 = new URL("http://api.wunderground.com/api/2e9b16146cbd45f7/forecast/q/" + state + "/" + city + ".json");
-        ObjectMapper weatherMapper = new ObjectMapper();
-        JsonNode weatherRoot = mapper.readTree(url2);
-        String weather = weatherRoot.get("forecast").get("txt_forecast").get("forecastday").get(0).get("fcttext").asText();
                
-       request.setAttribute("weather", weather);
-       
        request.getRequestDispatcher("result.jsp").forward(request, response);
         
     }

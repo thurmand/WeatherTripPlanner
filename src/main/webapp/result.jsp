@@ -16,10 +16,39 @@
         <title>Results</title>
     </head>
     <body>
-        <h1>This are your direction:</h1>
-        ${weather}
+        <h1>These are your directions:</h1>
+        <ul>
         <c:forEach var="paso" items="${pasos}">
-            <li>Starting point: ${paso.startLocation} Distance: ${paso.distance} How long it will take: ${paso.duration} End Location: ${paso.endLocation}</li>
+            <li>
+                <ul>
+                    <li>
+                        Starting point: ${paso.startLocation}
+                    </li>
+                    <li>
+                        Distance: ${paso.distance}
+                    </li>
+                    <li>
+                        How long it will take: ${paso.duration}
+                    </li>
+                    <li>
+                        End Location: ${paso.endLocation}
+                    </li>
+                    <ul>
+                        <c:forEach var="weather" items="${paso.weatherList}">
+                        <li>
+                            City: ${weather.city}
+                        </li>
+                        <li>
+                            State: ${weather.state}
+                        </li>
+                        <li>
+                            Forecast: ${weather.forecast}
+                        </li>
+                        </c:forEach>
+                    </ul>
+                </ul>
+            </li>
         </c:forEach>
+        </ul>
     </body>
 </html>
