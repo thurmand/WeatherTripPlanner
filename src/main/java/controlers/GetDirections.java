@@ -67,7 +67,7 @@ public class GetDirections extends HttpServlet {
         // syncronize call 
         DirectionsResult result;
         Direction dr = new Direction();
-        long ws = 0;
+        long weatherStep = 0;
         long distanceM = 0;
         try {
             result = DirectionsApi.getDirections(context, origin, destination).await();           
@@ -77,14 +77,18 @@ public class GetDirections extends HttpServlet {
 //                //System.out.println(step.distance.humanReadable);
 //                pasos.add(step.distance.humanReadable);
 //            }
-            ws = result.routes[0].legs[0].distance.inMeters / 9;
-            if(ws < 24000){
-                ws = 24000;
+            weatherStep = result.routes[0].legs[0].distance.inMeters / 9;
+            System.out.println(weatherStep);
+            if(weatherStep < 24000){
+                weatherStep = 24000;
             }
             
             for(int i = 0; i < dr.steps.size(); i++){
                 
-                while(distanceM > ws){                   
+                
+                
+                while(distanceM > weatherStep){        
+                    System.out.println(weatherStep);
                     URL url = new URL("http://api.wunderground.com/api/2e9b16146cbd45f7/geolookup/q/" + dr.steps.get(i).startLocation + ".json" );
                     ObjectMapper mapper = new ObjectMapper();
                     JsonNode root = mapper.readTree(url);
@@ -101,7 +105,7 @@ public class GetDirections extends HttpServlet {
                     
                     Weather weather = new Weather(city, state, forecast);
                     dr.steps.get(i).weatherList.add(weather);
-                    distanceM -= ws;
+                    distanceM -= weatherStep;
                 }
                 distanceM += dr.steps.get(i).distanceMeters;
             }   
