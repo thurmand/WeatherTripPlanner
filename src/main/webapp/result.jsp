@@ -34,7 +34,7 @@
                         End Location: ${paso.endLocation}
                     </li>
                     <ul>
-                        <c:forEach var="weather" items="${paso.weatherList}">
+                        <c:forEach var="weather" items="${weatherList}">
                         <li>
                             City: ${weather.city}
                         </li>
