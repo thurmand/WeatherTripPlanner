@@ -47,36 +47,40 @@ public class GetDirections extends HttpServlet {
      */
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        String origin = request.getParameter("origin");
-        String destination = request.getParameter("destination");
+    String origin = request.getParameter("origin");
+    String destination = request.getParameter("destination");
                
-// creating the request for the address
-        this.context = new GeoApiContext();
-        this.context.setQueryRateLimit(3)
-            .setConnectTimeout(1, TimeUnit.SECONDS)
-            .setReadTimeout(1, TimeUnit.SECONDS)
-            .setWriteTimeout(1, TimeUnit.SECONDS);
-        this.context.setApiKey("AIzaSyClNjB-fc75pi1jBFARfKlX6XEsCS3H77Q");
+    // creating the request for the address
+    this.context = new GeoApiContext();
+    this.context.setQueryRateLimit(3)
+        .setConnectTimeout(1, TimeUnit.SECONDS)
+        .setReadTimeout(1, TimeUnit.SECONDS)
+        .setWriteTimeout(1, TimeUnit.SECONDS);
+    
+    this.context.setApiKey("AIzaSyClNjB-fc75pi1jBFARfKlX6XEsCS3H77Q");
         
+    
+    // syncronize call 
+    DirectionsResult result;
+    Direction dr = new Direction();
+    //List<String> pasos = new ArrayList<>();
+    try {
+        result = DirectionsApi.getDirections(context, origin, destination).await();           
         
-        // syncronize call 
-        DirectionsResult result;
-        List<String> pasos = new ArrayList<>();
-        try {
-            result = DirectionsApi.getDirections(context, origin, destination).await();           
-            
-            Direction dr = DirectionHandler.getDirections(result.routes[0].legs[0].steps);
+        dr = DirectionHandler.getDirections(result.routes[0].legs[0].steps);
 //            for (DirectionsStep step : result.routes[0].legs[0].steps) {
 //                //System.out.println(step.distance.humanReadable);
 //                pasos.add(step.distance.humanReadable);
 //            }
-            request.setAttribute("pasos", dr.steps);
-        } catch (Exception ex) {
-            Logger.getLogger(GetDirections.class.getName()).log(Level.SEVERE, null, ex);
-        }
+        request.setAttribute("pasos", dr.steps);
+    } catch (Exception ex) {
+        Logger.getLogger(GetDirections.class.getName()).log(Level.SEVERE, null, ex);
+    }
+     
+    URL wheatherUrl = new URL("http://api.wunderground.com/api/2e9b16146cbd45f7/geolookup/q/" + dr.steps.get(0).startLocation + ".json");
+    System.out.println(wheatherUrl.toString());
         
-       
-        request.getRequestDispatcher("result.jsp").forward(request, response);
+    request.getRequestDispatcher("result.jsp").forward(request, response);
         
     }
 
