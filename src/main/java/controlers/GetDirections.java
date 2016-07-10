@@ -131,25 +131,50 @@ public class GetDirections extends HttpServlet {
                     System.out.println("Geolookup: " + url);
                     ObjectMapper mapper = new ObjectMapper();
                     JsonNode root = mapper.readTree(url);                   
-                    String city = root.get("location").get("nearby_weather_stations")
+                    String city;
+                    String state;
+                    try{
+                    city = root.get("location").get("nearby_weather_stations")
                             .get("pws").get("station").get(0).get("city").asText();
-                    String state = root.get("location").get("nearby_weather_stations")
+                    state = root.get("location").get("nearby_weather_stations")
                             .get("pws").get("station").get(0).get("state").asText();
+                    
+                    }
+                    catch(Exception e){
+                        city = root.get("location").get("city").asText();
+                        state = root.get("location").get("state").asText();
+                    }   
+                    
                     System.out.println("City: " + city);
                     System.out.println("State: " + state);
                     
-                    uri = new URI("http",
-                            "api.wunderground.com",
-                            "/api/2e9b16146cbd45f7/forecast/q/" + state + "/" + city + ".json",
-                            null);
-                    url = new URL(uri.toASCIIString());
-                    System.out.println("Forecast: " + url);
-                    JsonNode weatherRoot = mapper.readTree(url);
-                    String forecast = 
-                            weatherRoot.get("forecast").get("txt_forecast")
-                                    .get("forecastday").get(0).get("fcttext").asText();
+                    if (!city.equals("") && !state.equals("")){
+                        
                     
-                    weatherList.add(new Weather(city, state, forecast));
+                        uri = new URI("http",
+                                "api.wunderground.com",
+                                "/api/2e9b16146cbd45f7/forecast/q/" + state + "/" + city + ".json",
+                                null);
+                        url = new URL(uri.toASCIIString());
+                        System.out.println("Forecast: " + url);
+                        JsonNode weatherRoot = mapper.readTree(url);
+                        String forecast;
+                        int missed = 0;
+                        try{
+                            
+                            forecast = 
+                                    weatherRoot.get("forecast").get("txt_forecast")
+                                            .get("forecastday").get(0).get("fcttext").asText();
+                            weatherList.add(new Weather(city, state, forecast));
+                        }
+                        catch(Exception e){
+                            missed++;
+                            System.out.println(missed);
+                            if(missed < 5){
+                                currentDistance += weatherStep;
+                            }
+                        }
+                    }
                 }
             }   
             
