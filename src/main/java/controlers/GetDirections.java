@@ -91,7 +91,7 @@ public class GetDirections extends HttpServlet {
             for(int i = 0; i < dr.steps.size(); i++){
                 double startX = Double.parseDouble(dr.steps.get(i).startLocation.split(",")[0]);
                 double startY = Double.parseDouble(dr.steps.get(i).startLocation.split(",")[1]);
-                request.setAttribute("startX", startX);
+                request.setAttribute("startX", startX); // this line
                 request.setAttribute("startY", startY);
                 double endX = Double.parseDouble(dr.steps.get(i).endLocation.split(",")[0]);
                 double endY = Double.parseDouble(dr.steps.get(i).endLocation.split(",")[1]);
