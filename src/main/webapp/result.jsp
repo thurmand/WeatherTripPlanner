@@ -18,18 +18,13 @@
         <script src='//code.jquery.com/jquery-1.10.2.js'></script>
         <script src='//code.jquery.com/ui/1.11.4/jquery-ui.js'></script>
         <link href="css/bootstrap.css" rel="stylesheet" type="text/css"/>
-        <link href="css/bootstrap-theme.min.css" rel="stylesheet" type="text/css"/>
-        
-        <!-- js needed for Google's api-->
-        
+        <link href="css/bootstrap-theme.min.css" rel="stylesheet" type="text/css"/>              
+  
     </head>
     <body>
-        
         <h1>These are your direction from: STARTING-PONT to ENDING-POINT</h1>
         <div class="col-lg-1">a</div>
-        <div class="col-lg-6">
-            <div id="map-canvas" class="modal">This is a test </div>
-        </div>
+        <div id="map-canvas" class="checkTest"></div>
         <script src="js/mapjs.js" type="text/javascript"></script>
         <script src="http://maps.googleapis.com/maps/api/js?key=AIzaSyAceM-Z8MgL9g5mlqBrR5A2pIwiavQDXVs&callback=initialize"></script>
         
