@@ -35,4 +35,3 @@
         <div class="col-lg-1">c</div>
     </body>
 </html>
-<!-- Starting point: ${paso.startLocation}  End Location: ${paso.endLocation} -->
