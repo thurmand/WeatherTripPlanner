@@ -91,6 +91,8 @@ public class GetDirections extends HttpServlet {
             for(int i = 0; i < dr.steps.size(); i++){
                 double startX = Double.parseDouble(dr.steps.get(i).startLocation.split(",")[0]);
                 double startY = Double.parseDouble(dr.steps.get(i).startLocation.split(",")[1]);
+                request.setAttribute("startX", startX);
+                request.setAttribute("startY", startY);
                 double endX = Double.parseDouble(dr.steps.get(i).endLocation.split(",")[0]);
                 double endY = Double.parseDouble(dr.steps.get(i).endLocation.split(",")[1]);
                 
@@ -112,7 +114,7 @@ public class GetDirections extends HttpServlet {
                 //System.out.println("plusY: " + plusY);
                 
                 for(int j = 0; j < numPoints; j++){ 
-                    Coords coords = new Coords();
+                    Coords coords = new Coords();   
                     
                     coords.x = startX + (plusX * (j + 1));
                     coords.y = startY + (plusY * (j + 1));
