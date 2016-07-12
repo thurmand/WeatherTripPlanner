@@ -23,3 +23,40 @@ and open the template in the editor.
     margin: 10px;
    
 }
+.buttonGO{
+    margin-top: 10px;
+}
+.row{
+    margin: 8px;
+}
+.rightCol{
+    height: 100px;  
+}
+
+.navbar-inverse{
+    background-color: #4285F4 !important;
+    background-image: none !important;
+}
+.form-textbox{
+    width: 95%;
+    background-color: #4285F4 !important;
+    color: white !important;
+    font-weight: bolder;
+    border-top-color: transparent;
+    border-left-color: transparent;
+    border-right-color: transparent;
+    border-bottom-color: white !important;
+}
+.col-xs-offset-2{
+    margin-left: 20px !important    ;
+}
+.glyphicon{
+    font-size: 20px;
+    color: white !important;
+    font-weight: bolder;
+}
+
+.fullWidth{
+    margin-top: -20px;
+    width: 90%;
+}

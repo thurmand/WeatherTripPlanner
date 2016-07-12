@@ -4,13 +4,42 @@
         <title>Start Page</title>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
         <link href="css/index.css" rel="stylesheet" type="text/css"/>
+        <script src='//code.jquery.com/jquery-1.10.2.js'></script>
+        <script src='//code.jquery.com/ui/1.11.4/jquery-ui.js'></script>
+        <link href="css/bootstrap.css" rel="stylesheet" type="text/css"/>
+        <link href="css/bootstrap-theme.min.css" rel="stylesheet" type="text/css"/>
     </head>
     <body>
         <h1>Welcome to Weather Trip Planner</h1>
-        <form class="directionsForm" action="GetDirections" method="GET">
-            <input type="text" name="origin" placeholder="Starting point">
-            <input type="text" name="destination" placeholder="Destination">
-            <button type="submit" value="Go">Go</button>
-        </form>
+        <div class='navbar navbar-inverse navbar-static-top'>
+            <div class='container'>
+                <form class="form-group center-block" action="GetDirections" method="GET">
+                    <div class="col-lg-8">
+                        <div class="row">
+                           <div class="form-group">
+                                <span class="glyphicon glyphicon-home"></span> 
+                                <input class="text-center form-textbox" type="text" name="origin" placeholder="Starting point">
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="form-group">
+                                <span class="glyphicon glyphicon-map-marker"></span> 
+                                <input class="text-center form-textbox" type="text" name="destination" placeholder="Destination">
+                            </div>
+                        </div>
+                    </div>  
+                    <div class="col-lg-3 rightCol">
+                        <div class="form-group">
+                            <button  class="btn btn-primary buttonGO" type="submit" value="Go">Go</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+        <div class="col-lg-1"></div>
+        <div class="col-lg-9">
+            <img class="fullWidth" alt="BYU-Idaho" src="https://scontent-sea1-1.xx.fbcdn.net/v/t1.0-9/13615177_10208998315936032_3722415654435604848_n.jpg?oh=5e44a172330f40011c1222170f4801e4&amp;oe=57FC5BA2">
+        </div>
+        <div class="col-lg-3"></div>
     </body>
 </html>
