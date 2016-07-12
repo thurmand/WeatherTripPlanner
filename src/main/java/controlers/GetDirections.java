@@ -5,6 +5,7 @@
  */
 package controlers;
 
+import java.net.URI;
 import com.google.maps.DirectionsApi;
 import com.google.maps.DirectionsApiRequest;
 import com.google.maps.GeoApiContext;
@@ -16,6 +17,7 @@ import java.io.PrintWriter;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -26,6 +28,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import models.Direction;
 import models.DirectionHandler;
+import models.Weather;
 
 /**
  *
@@ -72,15 +75,12 @@ public class GetDirections extends HttpServlet {
 //                //System.out.println(step.distance.humanReadable);
 //                pasos.add(step.distance.humanReadable);
 //            }
-        request.setAttribute("pasos", dr.steps);
-    } catch (Exception ex) {
-        Logger.getLogger(GetDirections.class.getName()).log(Level.SEVERE, null, ex);
-    }
-     
-    URL wheatherUrl = new URL("http://api.wunderground.com/api/2e9b16146cbd45f7/geolookup/q/" + dr.steps.get(0).startLocation + ".json");
-    System.out.println(wheatherUrl.toString());
-        
-    request.getRequestDispatcher("result.jsp").forward(request, response);
+        //    request.setAttribute("pasos", dr.steps);
+        } catch (Exception ex) {
+            Logger.getLogger(GetDirections.class.getName()).log(Level.SEVERE, null, ex);
+        }
+               
+       request.getRequestDispatcher("result.jsp").forward(request, response);
         
     }
 

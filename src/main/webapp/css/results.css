@@ -9,7 +9,6 @@ and open the template in the editor.
 */
 
 #map-canvas{
-    height: 100%;
     margin: 0px;
     padding: 0px;
 }
@@ -18,4 +17,11 @@ and open the template in the editor.
     min-width: 400px;
     max-width: 450px;
     margin-bottom: 15px !important;
+}
+
+.checkTest{
+    height: 400px !important;
+    width: 600px !important;
+    min-width: 500px !important;
+    min-height: 350px !important;
 }

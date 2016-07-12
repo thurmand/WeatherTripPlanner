@@ -8,7 +8,6 @@ package models;
 import com.google.maps.model.DirectionsStep;
 import java.util.ArrayList;
 import java.util.List;
-import models.Step;
 
 /**
  *
@@ -25,7 +24,7 @@ public class Direction {
     }
     public Direction()
     {
-        ; // nothing for now better fix this
+         // nothing for now better fix this
     }
 }
 
