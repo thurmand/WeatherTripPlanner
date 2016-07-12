@@ -94,22 +94,22 @@ public class GetDirections extends HttpServlet {
                 double endX = Double.parseDouble(dr.steps.get(i).endLocation.split(",")[0]);
                 double endY = Double.parseDouble(dr.steps.get(i).endLocation.split(",")[1]);
                 
-                System.out.println("StartX: "+startX);
-                System.out.println("StartY: "+startY);
-                System.out.println("endX: "+endX);
-                System.out.println("endY: "+endY);
+//                System.out.println("StartX: "+startX);
+//                System.out.println("StartY: "+startY);
+//                System.out.println("endX: "+endX);
+//                System.out.println("endY: "+endY);
                                                 
                 currentDistance += dr.steps.get(i).getDistanceMeters();
                 int numPoints = (int) floor(currentDistance/weatherStep);
-                System.out.println("Before currentDistance: " + currentDistance);
+                //System.out.println("Before currentDistance: " + currentDistance);
                 currentDistance -= weatherStep * numPoints;
-                System.out.println("After currentDistance: " + currentDistance);
-                System.out.println("numPoints: " + numPoints);
+               // System.out.println("After currentDistance: " + currentDistance);
+//                System.out.println("numPoints: " + numPoints);
                 double plusX = (endX - startX) / (numPoints + 1);
                 double plusY = (endY - startY) / (numPoints + 1); 
                 
-                System.out.println("plusX: " + plusX);
-                System.out.println("plusY: " + plusY);
+                //System.out.println("plusX: " + plusX);
+                //System.out.println("plusY: " + plusY);
                 
                 for(int j = 0; j < numPoints; j++){ 
                     Coords coords = new Coords();
@@ -117,8 +117,8 @@ public class GetDirections extends HttpServlet {
                     coords.x = startX + (plusX * (j + 1));
                     coords.y = startY + (plusY * (j + 1));
                     
-                    System.out.println("Coords.X: " + coords.x);
-                    System.out.println("Coords.Y: " + coords.y);
+                    //System.out.println("Coords.X: " + coords.x);
+                    //System.out.println("Coords.Y: " + coords.y);
                     
                     coordsList.add(coords);
                     
