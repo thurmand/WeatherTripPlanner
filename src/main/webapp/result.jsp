@@ -27,7 +27,6 @@
         <div id="map-canvas" class="checkTest"></div>
         <script src="js/mapjs.js" type="text/javascript"></script>
         <script src="http://maps.googleapis.com/maps/api/js?key=AIzaSyAceM-Z8MgL9g5mlqBrR5A2pIwiavQDXVs&callback=initialize"></script>
-        
         <div class="col-lg-4">
             <c:forEach var="paso" items="${pasos}">
                 <p class="btn btn-success weatherList"> Distance: ${paso.distance} How long it will take: ${paso.duration}</p>

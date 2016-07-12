@@ -6,6 +6,8 @@
 package controlers;
 
 import java.net.URI;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.maps.DirectionsApi;
 import com.google.maps.DirectionsApiRequest;
 import com.google.maps.GeoApiContext;
@@ -14,6 +16,7 @@ import com.google.maps.model.DirectionsStep;
 import com.google.maps.model.Distance;
 import java.io.IOException;
 import java.io.PrintWriter;
+import static java.lang.Math.floor;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
@@ -29,7 +32,7 @@ import javax.servlet.http.HttpServletResponse;
 import models.Direction;
 import models.DirectionHandler;
 import models.Weather;
-
+import models.Coords;
 /**
  *
  * @author Elfre
@@ -50,32 +53,133 @@ public class GetDirections extends HttpServlet {
      */
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-    String origin = request.getParameter("origin");
-    String destination = request.getParameter("destination");
+        String origin = request.getParameter("origin");
+        String destination = request.getParameter("destination");
                
-    // creating the request for the address
-    this.context = new GeoApiContext();
-    this.context.setQueryRateLimit(3)
-        .setConnectTimeout(1, TimeUnit.SECONDS)
-        .setReadTimeout(1, TimeUnit.SECONDS)
-        .setWriteTimeout(1, TimeUnit.SECONDS);
-    
-    this.context.setApiKey("AIzaSyClNjB-fc75pi1jBFARfKlX6XEsCS3H77Q");
+// creating the request for the address
+        this.context = new GeoApiContext();
+        this.context.setQueryRateLimit(3)
+            .setConnectTimeout(1, TimeUnit.SECONDS)
+            .setReadTimeout(1, TimeUnit.SECONDS)
+            .setWriteTimeout(1, TimeUnit.SECONDS);
+        this.context.setApiKey("AIzaSyClNjB-fc75pi1jBFARfKlX6XEsCS3H77Q");
         
-    
-    // syncronize call 
-    DirectionsResult result;
-    Direction dr = new Direction();
-    //List<String> pasos = new ArrayList<>();
-    try {
-        result = DirectionsApi.getDirections(context, origin, destination).await();           
         
-        dr = DirectionHandler.getDirections(result.routes[0].legs[0].steps);
+        // syncronize call 
+        DirectionsResult result;
+        Direction dr = new Direction();
+        long weatherStep = 0;
+        long currentDistance = 0;
+        try {
+            result = DirectionsApi.getDirections(context, origin, destination).await();           
+            
+            dr = DirectionHandler.getDirections(result.routes[0].legs[0].steps);
 //            for (DirectionsStep step : result.routes[0].legs[0].steps) {
 //                //System.out.println(step.distance.humanReadable);
 //                pasos.add(step.distance.humanReadable);
 //            }
-        //    request.setAttribute("pasos", dr.steps);
+            weatherStep = result.routes[0].legs[0].distance.inMeters / 5;
+            
+            if(weatherStep < 24000){
+                weatherStep = 24000;
+            }
+            System.out.println("weatherStep: " + weatherStep);
+            
+            List<Coords> coordsList = new ArrayList<>();
+            List<Weather> weatherList = new ArrayList<>();
+
+            for(int i = 0; i < dr.steps.size(); i++){
+                double startX = Double.parseDouble(dr.steps.get(i).startLocation.split(",")[0]);
+                double startY = Double.parseDouble(dr.steps.get(i).startLocation.split(",")[1]);
+                double endX = Double.parseDouble(dr.steps.get(i).endLocation.split(",")[0]);
+                double endY = Double.parseDouble(dr.steps.get(i).endLocation.split(",")[1]);
+                
+//                System.out.println("StartX: "+startX);
+//                System.out.println("StartY: "+startY);
+//                System.out.println("endX: "+endX);
+//                System.out.println("endY: "+endY);
+                                                
+                currentDistance += dr.steps.get(i).getDistanceMeters();
+                int numPoints = (int) floor(currentDistance/weatherStep);
+                //System.out.println("Before currentDistance: " + currentDistance);
+                currentDistance -= weatherStep * numPoints;
+               // System.out.println("After currentDistance: " + currentDistance);
+//                System.out.println("numPoints: " + numPoints);
+                double plusX = (endX - startX) / (numPoints + 1);
+                double plusY = (endY - startY) / (numPoints + 1); 
+                
+                //System.out.println("plusX: " + plusX);
+                //System.out.println("plusY: " + plusY);
+                
+                for(int j = 0; j < numPoints; j++){ 
+                    Coords coords = new Coords();
+                    
+                    coords.x = startX + (plusX * (j + 1));
+                    coords.y = startY + (plusY * (j + 1));
+                    
+                    //System.out.println("Coords.X: " + coords.x);
+                    //System.out.println("Coords.Y: " + coords.y);
+                    
+                    coordsList.add(coords);
+                    
+                    URI uri = 
+                            new URI("http",
+                                    "api.wunderground.com",
+                                    "/api/2e9b16146cbd45f7/geolookup/q/" 
+                                    + coords.x + "," + coords.y + ".json", null );
+                    URL url = new URL(uri.toASCIIString());
+                    System.out.println("Geolookup: " + url);
+                    ObjectMapper mapper = new ObjectMapper();
+                    JsonNode root = mapper.readTree(url);                   
+                    String city;
+                    String state;
+                    try{
+                    city = root.get("location").get("nearby_weather_stations")
+                            .get("pws").get("station").get(0).get("city").asText();
+                    state = root.get("location").get("nearby_weather_stations")
+                            .get("pws").get("station").get(0).get("state").asText();
+                    
+                    }
+                    catch(Exception e){
+                        city = root.get("location").get("city").asText();
+                        state = root.get("location").get("state").asText();
+                    }   
+                    
+                    System.out.println("City: " + city);
+                    System.out.println("State: " + state);
+                    
+                    if (!city.equals("") && !state.equals("")){
+                        
+                    
+                        uri = new URI("http",
+                                "api.wunderground.com",
+                                "/api/2e9b16146cbd45f7/forecast/q/" + state + "/" + city + ".json",
+                                null);
+                        url = new URL(uri.toASCIIString());
+                        System.out.println("Forecast: " + url);
+                        JsonNode weatherRoot = mapper.readTree(url);
+                        String forecast;
+                        int missed = 0;
+                        try{
+                            
+                            forecast = 
+                                    weatherRoot.get("forecast").get("txt_forecast")
+                                            .get("forecastday").get(0).get("fcttext").asText();
+                            weatherList.add(new Weather(city, state, forecast));
+                        }
+                        catch(Exception e){
+                            missed++;
+                            System.out.println(missed);
+                            if(missed < 5){
+                                currentDistance += weatherStep;
+                            }
+                        }
+                    }
+                }
+            }   
+            
+            request.setAttribute("pasos", dr.steps);
+            request.setAttribute("weatherList", weatherList);
         } catch (Exception ex) {
             Logger.getLogger(GetDirections.class.getName()).log(Level.SEVERE, null, ex);
         }

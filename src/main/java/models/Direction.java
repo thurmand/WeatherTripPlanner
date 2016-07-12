@@ -1,3 +1,4 @@
+
 /*
  * To change this license header, choose License Headers in Project Properties.
  * To change this template file, choose Tools | Templates
@@ -8,6 +9,7 @@ package models;
 import com.google.maps.model.DirectionsStep;
 import java.util.ArrayList;
 import java.util.List;
+import models.Step;
 
 /**
  *
@@ -22,9 +24,8 @@ public class Direction {
             steps.add(new Step(step));
         }
     }
-    public Direction()
-    {
-         // nothing for now better fix this
+    
+    public Direction(){
+        
     }
 }
-
