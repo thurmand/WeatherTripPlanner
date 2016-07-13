@@ -32,7 +32,6 @@ import javax.servlet.http.HttpServletResponse;
 import models.Direction;
 import models.DirectionHandler;
 import models.Weather;
-import models.Coords;
 /**
  *
  * @author Elfre
@@ -55,6 +54,9 @@ public class GetDirections extends HttpServlet {
             throws ServletException, IOException {
         String origin = request.getParameter("origin");
         String destination = request.getParameter("destination");
+        
+        request.setAttribute("origin", origin);
+        request.setAttribute("destination", destination);
                
 // creating the request for the address
         this.context = new GeoApiContext();
@@ -85,13 +87,12 @@ public class GetDirections extends HttpServlet {
             }
             System.out.println("weatherStep: " + weatherStep);
             
-            List<Coords> coordsList = new ArrayList<>();
             List<Weather> weatherList = new ArrayList<>();
 
             for(int i = 0; i < dr.steps.size(); i++){
                 double startX = Double.parseDouble(dr.steps.get(i).startLocation.split(",")[0]);
                 double startY = Double.parseDouble(dr.steps.get(i).startLocation.split(",")[1]);
-                request.setAttribute("startX", startX); // this line
+                request.setAttribute("startX", startX);
                 request.setAttribute("startY", startY);
                 double endX = Double.parseDouble(dr.steps.get(i).endLocation.split(",")[0]);
                 double endY = Double.parseDouble(dr.steps.get(i).endLocation.split(",")[1]);
@@ -114,21 +115,18 @@ public class GetDirections extends HttpServlet {
                 //System.out.println("plusY: " + plusY);
                 
                 for(int j = 0; j < numPoints; j++){ 
-                    Coords coords = new Coords();   
-                    
-                    coords.x = startX + (plusX * (j + 1));
-                    coords.y = startY + (plusY * (j + 1));
+                                       
+                    double coordsX = startX + (plusX * (j + 1));
+                    double coordsY = startY + (plusY * (j + 1));
                     
                     //System.out.println("Coords.X: " + coords.x);
                     //System.out.println("Coords.Y: " + coords.y);
-                    
-                    coordsList.add(coords);
                     
                     URI uri = 
                             new URI("http",
                                     "api.wunderground.com",
                                     "/api/2e9b16146cbd45f7/geolookup/q/" 
-                                    + coords.x + "," + coords.y + ".json", null );
+                                    + coordsX + "," + coordsY + ".json", null );
                     URL url = new URL(uri.toASCIIString());
                     System.out.println("Geolookup: " + url);
                     ObjectMapper mapper = new ObjectMapper();
@@ -167,7 +165,7 @@ public class GetDirections extends HttpServlet {
                             forecast = 
                                     weatherRoot.get("forecast").get("txt_forecast")
                                             .get("forecastday").get(0).get("fcttext").asText();
-                            weatherList.add(new Weather(city, state, forecast));
+                            weatherList.add(new Weather(city, state, forecast, coordsX, coordsY));
                         }
                         catch(Exception e){
                             missed++;
@@ -178,9 +176,7 @@ public class GetDirections extends HttpServlet {
                         }
                     }
                 }
-            }   
-            
-            request.setAttribute("pasos", dr.steps);
+            }
             request.setAttribute("weatherList", weatherList);
         } catch (Exception ex) {
             Logger.getLogger(GetDirections.class.getName()).log(Level.SEVERE, null, ex);

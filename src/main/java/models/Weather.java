@@ -14,11 +14,15 @@ public class Weather {
     public String city;
     public String state;
     public String forecast;
+    public double lat;
+    public double lng;
     
-    public Weather(String city, String state, String weather){
+    public Weather(String city, String state, String weather, double x, double y){
         this.city = city;
         this.state = state;
         this.forecast = weather;
+        this.lat = x;
+        this.lng = y;
     }
 
     public String getCity() {
