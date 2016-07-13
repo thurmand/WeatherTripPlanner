@@ -14,13 +14,16 @@ public class Weather {
     public String city;
     public String state;
     public String forecast;
+    public String weatherIcon;
     public double lat;
     public double lng;
     
-    public Weather(String city, String state, String weather, double x, double y){
+    public Weather(String city, String state, 
+            String weather, String iconUrl, double x, double y){
         this.city = city;
         this.state = state;
         this.forecast = weather;
+        this.weatherIcon = iconUrl;
         this.lat = x;
         this.lng = y;
     }

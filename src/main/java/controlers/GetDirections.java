@@ -133,6 +133,7 @@ public class GetDirections extends HttpServlet {
                     JsonNode root = mapper.readTree(url);                   
                     String city;
                     String state;
+                    
                     try{
                     city = root.get("location").get("nearby_weather_stations")
                             .get("pws").get("station").get(0).get("city").asText();
@@ -159,13 +160,19 @@ public class GetDirections extends HttpServlet {
                         System.out.println("Forecast: " + url);
                         JsonNode weatherRoot = mapper.readTree(url);
                         String forecast;
+                        String wIcon;
                         int missed = 0;
                         try{
                             
                             forecast = 
                                     weatherRoot.get("forecast").get("txt_forecast")
                                             .get("forecastday").get(0).get("fcttext").asText();
-                            weatherList.add(new Weather(city, state, forecast, coordsX, coordsY));
+                            
+                            wIcon = weatherRoot.get("forecast").get("txt_forecast")
+                                            .get("forecastday").get(0).get("icon_url").asText();
+                            
+                            weatherList.add(new Weather(city, state, forecast,
+                                    wIcon, coordsX, coordsY));
                         }
                         catch(Exception e){
                             missed++;
