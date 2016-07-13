@@ -37,14 +37,17 @@ function initialize(argument)
         });
         
         
+    // the marker itself 
     var marker = new google.maps.Marker({
         position: myCenter
     });
     marker.setMap(map);
     
+    // this is is the info in the maker
     var info = new google.maps.InfoWindow({
         content: "This will show in the popup"
     });
     
+    // this will display by default with the page
     info.open(map, marker);
 }
