@@ -21,6 +21,7 @@ public class Step{
     public String startLocation;
     public String endLocation;
     
+    
     public List<Weather> getWeatherList() {
         return weatherList;
     }

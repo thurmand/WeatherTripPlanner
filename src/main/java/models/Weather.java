@@ -18,6 +18,43 @@ public class Weather {
     public double lat;
     public double lng;
     
+    @Override
+    public String toString() {
+        return String.format(
+                "{ city: \"" + city + 
+                "\", state: \"" + state + 
+                "\", forecast: \"" + forecast +
+                "\", weatherIcon: \"" + weatherIcon +
+                "\", lat: " + lat +
+                ", lng: " + lng +
+                "}"
+        );
+    }
+
+    public String getWeatherIcon() {
+        return weatherIcon;
+    }
+
+    public void setWeatherIcon(String weatherIcon) {
+        this.weatherIcon = weatherIcon;
+    }
+
+    public double getLat() {
+        return lat;
+    }
+
+    public void setLat(double lat) {
+        this.lat = lat;
+    }
+
+    public double getLng() {
+        return lng;
+    }
+
+    public void setLng(double lng) {
+        this.lng = lng;
+    }
+    
     public Weather(String city, String state, 
             String weather, String iconUrl, double x, double y){
         this.city = city;
